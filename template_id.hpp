@@ -1,6 +1,7 @@
 #ifndef STATE_MACHINES_TEMPLATE_ID_HPP
 #define STATE_MACHINES_TEMPLATE_ID_HPP
 #include <iostream>
+#include <list>
 #include <map>
 #include <memory>
 
@@ -37,29 +38,29 @@ template<typename StateIdType>
 class StateMachine {
 public:
   void addState(std::unique_ptr<State<StateIdType>> state) {
-    states[state->getStateId()] = std::move(state);
+    mStates[state->getStateId()] = std::move(state);
   }
 
   void setInitialState(StateIdType stateId) {
-    currentState = states[stateId].get();
-    if (currentState) {
-      currentState->enter();
+    mCurrentState = mStates[stateId].get();
+    if (mCurrentState) {
+      mCurrentState->enter();
     }
   }
 
   void changeState(StateIdType newStateId) {
-    if (currentState) {
-      currentState->exit();
+    if (mCurrentState) {
+      mCurrentState->exit();
     }
-    currentState = states[newStateId].get();
-    if (currentState) {
-      currentState->enter();
+    mCurrentState = mStates[newStateId].get();
+    if (mCurrentState) {
+      mCurrentState->enter();
     }
   }
 
   void update() {
-    if (currentState) {
-      currentState->update(*this);
+    if (mCurrentState) {
+      mCurrentState->update(*this);
     }
   }
 
@@ -68,48 +69,47 @@ public:
   }
 
 private:
-  std::map<StateIdType, std::unique_ptr<State<StateIdType>>> states;
-  State<StateIdType> *currentState = nullptr;
+  std::map<StateIdType, std::unique_ptr<State<StateIdType>>> mStates;
+  State<StateIdType> *mCurrentState = nullptr;
 };
 
 // Example usage
-enum class GameState {
-  MENU,
-  PLAYING,
+enum class TestStateId {
+  cState1,
+  cState2,
 };
 
-class MenuState : public State<GameState> {
+class State1 : public State<TestStateId> {
 public:
-  MenuState()
-      : State(GameState::MENU) {}
-  void enter() override { std::cout << "Entering Menu State\n"; }
-  void exit() override { std::cout << "Exiting Menu State\n"; }
-  void update(StateMachine<GameState>& stateMachine) override {
-    std::cout << "Updating Menu State\n";
+  State1()
+      : State(TestStateId::cState1) {}
+  void enter() override { std::cout << "Entering state " << static_cast<int>(mStateId) << std::endl; }
+  void exit() override { std::cout << "Exiting state " << static_cast<int>(mStateId) << std::endl; }
+  void update(StateMachine<TestStateId>& stateMachine) override {
+    std::cout << "Updating state " << static_cast<int>(mStateId) << std::endl;
     stateMachine.doSomeWork();
-    stateMachine.changeState(GameState::PLAYING);
+    stateMachine.changeState(TestStateId::cState2);
   }
 };
 
-class PlayingState : public State<GameState> {
+class State2 : public State<TestStateId> {
 public:
-  PlayingState()
-      : State(GameState::PLAYING) {}
-  void enter() override { std::cout << "Entering Playing State\n"; }
-  void exit() override { std::cout << "Exiting Playing State\n"; }
-  void update(StateMachine<GameState>& stateMachine) override {
-    std::cout << "Updating Playing State\n";
-
-    stateMachine.changeState(GameState::MENU);
+  State2()
+      : State(TestStateId::cState2) {}
+  void enter() override { std::cout << "Entering state " << static_cast<int>(mStateId) << std::endl; }
+  void exit() override { std::cout << "Exiting state " << static_cast<int>(mStateId) << std::endl; }
+  void update(StateMachine<TestStateId>& stateMachine) override {
+    std::cout << "Updating state " << static_cast<int>(mStateId) << std::endl;
+    stateMachine.changeState(TestStateId::cState1);
   }
 };
 
 void test() {
-  StateMachine<GameState> gameSM;
+  StateMachine<TestStateId> gameSM;
 
-  gameSM.addState(std::make_unique<MenuState>());
-  gameSM.addState(std::make_unique<PlayingState>());
-  gameSM.setInitialState(GameState::MENU);
+  gameSM.addState(std::make_unique<State1>());
+  gameSM.addState(std::make_unique<State2>());
+  gameSM.setInitialState(TestStateId::cState1);
   gameSM.update();
   gameSM.update();
 }
