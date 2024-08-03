@@ -21,9 +21,21 @@ public:
   explicit State(const StateId stateId)
       : mStateID(stateId) {}
 
-  virtual void onEvent(StateMachine& stateMachine) {
-    std::cout << "onEvent called in wrong state: " << static_cast<int>(mStateID) << std::endl;
+  virtual void enter(StateMachine& stateMachine) {}
+
+  virtual void onEventA(StateMachine& stateMachine) {
+    std::cout << "onEventA called in wrong state: " << static_cast<int>(mStateID) << std::endl;
   }
+
+  virtual void onEventB(StateMachine& stateMachine) {
+    std::cout << "onEventB called in wrong state: " << static_cast<int>(mStateID) << std::endl;
+  }
+
+  virtual void onEventC(StateMachine& stateMachine) {
+    std::cout << "onEventC called in wrong state: " << static_cast<int>(mStateID) << std::endl;
+  }
+
+  virtual void leave(StateMachine& stateMachine) {}
 
   StateId getStateID() const { return mStateID; }
 
@@ -34,8 +46,12 @@ private:
 class StateMachine {
 public:
   StateMachine();
-  void onEvent();
+  void onEventA();
+  void onEventB();
+  void onEventC();
   void changeState(const StateId stateId);
+
+  void doSomething();
 
 private:
   StateId mCurrentStateID;
@@ -47,7 +63,12 @@ class StateA : public State {
 public:
   StateA()
       : State(StateId::cStateA) {}
-  void onEvent(StateMachine& stateMachine) override {
+  void onEventA(StateMachine& stateMachine) override {
+    // do nothing
+  }
+
+  void onEventB(StateMachine& stateMachine) override {
+    stateMachine.doSomething();
     stateMachine.changeState(StateId::cStateB);
   }
 };
@@ -56,7 +77,7 @@ class StateB : public State {
 public:
   StateB()
       : State(StateId::cStateB) {}
-  void onEvent(StateMachine& stateMachine) override {
+  void onEventC(StateMachine& stateMachine) override {
     stateMachine.changeState(StateId::cStateC);
   }
 };
@@ -65,6 +86,10 @@ class StateC : public State {
 public:
   StateC()
       : State(StateId::cStateC) {}
+
+  void onEventA(StateMachine& stateMachine) override {
+    stateMachine.changeState(StateId::cStateA);
+  }
 };
 
 // Implementation of StateMachine methods
@@ -75,15 +100,28 @@ StateMachine::StateMachine()
   mStates[StateId::cStateC] = std::make_unique<StateC>();
 }
 
-void StateMachine::onEvent() {
-  mStates[mCurrentStateID]->onEvent(*this);
+void StateMachine::onEventA() {
+  mStates[mCurrentStateID]->onEventA(*this);
+}
+
+void StateMachine::onEventB() {
+  mStates[mCurrentStateID]->onEventB(*this);
+}
+
+void StateMachine::onEventC() {
+  mStates[mCurrentStateID]->onEventC(*this);
 }
 
 void StateMachine::changeState(const StateId stateId) {
+  mStates[mCurrentStateID]->leave(*this);
   std::cout << "changeState from " << static_cast<int>(mCurrentStateID) << " to " << static_cast<int>(stateId) << std::endl;
   mCurrentStateID = stateId;
+  mStates[mCurrentStateID]->enter(*this);
 }
 
+void StateMachine::doSomething() {
+  std::cout << "something is done" << std::endl;
+}
 
 }// namespace classic
 
