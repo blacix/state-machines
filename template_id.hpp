@@ -63,6 +63,10 @@ public:
     }
   }
 
+  void doSomeWork() {
+    std::cout << "some work is done" << std::endl;
+  }
+
 private:
   std::map<StateIdType, std::unique_ptr<State<StateIdType>>> states;
   State<StateIdType> *currentState = nullptr;
@@ -82,6 +86,7 @@ public:
   void exit() override { std::cout << "Exiting Menu State\n"; }
   void update(StateMachine<GameState>& stateMachine) override {
     std::cout << "Updating Menu State\n";
+    stateMachine.doSomeWork();
     stateMachine.changeState(GameState::PLAYING);
   }
 };
@@ -94,6 +99,7 @@ public:
   void exit() override { std::cout << "Exiting Playing State\n"; }
   void update(StateMachine<GameState>& stateMachine) override {
     std::cout << "Updating Playing State\n";
+
     stateMachine.changeState(GameState::MENU);
   }
 };

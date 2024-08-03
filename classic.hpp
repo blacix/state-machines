@@ -124,7 +124,7 @@ void StateMachine::doSomething() {
 }
 
 void test() {
-  classic::StateMachine classicStateMachine;
+  StateMachine classicStateMachine;
   classicStateMachine.onEventB();
   classicStateMachine.onEventB();
   classicStateMachine.onEventC();

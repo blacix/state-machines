@@ -7,4 +7,5 @@ add_executable(state_machines main.cpp
         classic.hpp
         template_id.hpp
         template_states.hpp
-        variadic_states.hpp)
+        variadic_states.hpp
+        template_events.hpp)
