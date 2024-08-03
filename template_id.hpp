@@ -14,17 +14,22 @@ class StateMachine;
 template<typename StateIdType>
 class State {
 public:
+  State(const State&) = delete;
+  State(State&&) = delete;
+  State& operator=(const State&) = delete;
+  State& operator=(State&&) = delete;
   virtual ~State() = default;
   virtual void enter() = 0;
   virtual void exit() = 0;
   virtual void update() = 0;
 
-  StateIdType getStateId() const { return stateId; }
+  StateIdType getStateId() const { return mStateId; }
 
 protected:
-  State(StateIdType id)
-      : stateId(id) {}
-  StateIdType stateId;
+  explicit State(StateIdType id)
+      : mStateId(id) {}
+
+  StateIdType mStateId;
 };
 
 // State Machine class
@@ -67,8 +72,6 @@ private:
 enum class GameState {
   MENU,
   PLAYING,
-  PAUSED,
-  GAME_OVER
 };
 
 class MenuState : public State<GameState> {
