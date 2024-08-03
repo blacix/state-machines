@@ -1,11 +1,11 @@
-#ifndef STATE_MACHINES_TEMPLATE_STATES_HPP
-#define STATE_MACHINES_TEMPLATE_STATES_HPP
+#ifndef STATE_MACHINES_VARIADIC_FLEXIBLE_HPP
+#define STATE_MACHINES_VARIADIC_FLEXIBLE_HPP
 #include <functional>
 #include <iostream>
 #include <tuple>
 #include <variant>
 
-namespace template_states {
+namespace variadic_flexible {
 
 template<typename... States>
 class StateMachine {
@@ -89,6 +89,6 @@ int test() {
   return 0;
 }
 
-}// namespace template_states
+}// namespace variadic_flexible
 
-#endif//STATE_MACHINES_TEMPLATE_STATES_HPP
+#endif//STATE_MACHINES_VARIADIC_FLEXIBLE_HPP
