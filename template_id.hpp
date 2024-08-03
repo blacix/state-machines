@@ -21,7 +21,7 @@ public:
   virtual ~State() = default;
   virtual void enter() = 0;
   virtual void exit() = 0;
-  virtual void update() = 0;
+  virtual void update(StateMachine<StateIdType>& stateMachine) = 0;
 
   StateIdType getStateId() const { return mStateId; }
 
@@ -59,7 +59,7 @@ public:
 
   void update() {
     if (currentState) {
-      currentState->update();
+      currentState->update(*this);
     }
   }
 
@@ -80,7 +80,10 @@ public:
       : State(GameState::MENU) {}
   void enter() override { std::cout << "Entering Menu State\n"; }
   void exit() override { std::cout << "Exiting Menu State\n"; }
-  void update() override { std::cout << "Updating Menu State\n"; }
+  void update(StateMachine<GameState>& stateMachine) override {
+    std::cout << "Updating Menu State\n";
+    stateMachine.changeState(GameState::PLAYING);
+  }
 };
 
 class PlayingState : public State<GameState> {
@@ -89,7 +92,10 @@ public:
       : State(GameState::PLAYING) {}
   void enter() override { std::cout << "Entering Playing State\n"; }
   void exit() override { std::cout << "Exiting Playing State\n"; }
-  void update() override { std::cout << "Updating Playing State\n"; }
+  void update(StateMachine<GameState>& stateMachine) override {
+    std::cout << "Updating Playing State\n";
+    stateMachine.changeState(GameState::MENU);
+  }
 };
 
 void test() {
@@ -97,11 +103,8 @@ void test() {
 
   gameSM.addState(std::make_unique<MenuState>());
   gameSM.addState(std::make_unique<PlayingState>());
-
   gameSM.setInitialState(GameState::MENU);
   gameSM.update();
-
-  gameSM.changeState(GameState::PLAYING);
   gameSM.update();
 }
 
