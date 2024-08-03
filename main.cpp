@@ -1,6 +1,9 @@
+#include "classic.hpp"
 #include <iostream>
-
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+  classic::StateMachine classicStateMachine;
+  classicStateMachine.onEvent();
+  classicStateMachine.onEvent();
+  classicStateMachine.onEvent();
+  return 0;
 }
