@@ -124,11 +124,11 @@ void StateMachine::doSomething() {
 }
 
 void test() {
-  StateMachine classicStateMachine;
-  classicStateMachine.onEventB();
-  classicStateMachine.onEventB();
-  classicStateMachine.onEventC();
-  classicStateMachine.onEventA();
+  StateMachine stateMachine;
+  stateMachine.onEventB();
+  stateMachine.onEventB();
+  stateMachine.onEventC();
+  stateMachine.onEventA();
 }
 
 }// namespace simple
