@@ -7,6 +7,6 @@ add_executable(state_machines main.cpp
         simple.hpp
         template_id.hpp
         variadic_flexible.hpp
-        variadic_states.hpp
         variadic_simple.hpp
+        variadic_enhanced.hpp
 )

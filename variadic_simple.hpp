@@ -1,80 +1,82 @@
-
 #ifndef STATE_MACHINES_VARIADIC_SIMPLE_HPP
 #define STATE_MACHINES_VARIADIC_SIMPLE_HPP
-#include <functional>
 #include <iostream>
-#include <tuple>
+#include <type_traits>
 #include <variant>
 
 namespace variadic_simple {
 
+// Forward declaration of the StateMachine class
+template<typename... States>
+class StateMachine;
+
+// Base State class
+class State {
+public:
+  virtual ~State() = default;
+  virtual void entry() {}
+  virtual void exit() {}
+  virtual void update() {}
+};
+
+// StateMachine class
 template<typename... States>
 class StateMachine {
-public:
-  template<typename State>
-  void changeState() {
-    currentState = &std::get<State>(states);
-  }
-
-  template<typename Event>
-  void handle(const Event& event) {
-    auto passEventToState = [this, &event](auto statePtr) {
-      statePtr->handle(*this, event);
-    };
-    std::visit(passEventToState, currentState);
-  }
-
 private:
-  std::tuple<States...> states;
-  std::variant<States *...> currentState{&std::get<0>(states)};
-};
+  std::variant<States...> mCurrentState;
+  std::tuple<States...> mStates;
 
-struct OpenEvent {};
-struct CloseEvent {};
+  template<typename T>
+  static constexpr bool is_valid_state = (std::is_base_of_v<State, T>);
 
-struct ClosedState;
-struct OpenState;
-
-struct ClosedState {
-  template<typename Machine>
-  void handle(Machine& machine, const OpenEvent&) const {
-    std::cout << "Opening the door..." << std::endl;
-    machine.template changeState<OpenState>();
+public:
+  StateMachine()
+      : mCurrentState(std::get<0>(mStates)) {
+    static_assert((is_valid_state<States> && ...), "All states must inherit from the State class");
   }
 
-  template<typename Machine>
-  void handle(Machine&, const CloseEvent&) const {
-    std::cout << "Cannot close. The door is already closed!" << std::endl;
-  }
-};
+  template<typename T>
+  void transition() {
+    static_assert(is_valid_state<T>, "Invalid state type");
 
-struct OpenState {
-  template<typename Machine>
-  void handle(Machine&, const OpenEvent&) const {
-    std::cout << "Cannot open. The door is already open!" << std::endl;
+    std::visit([](auto& state) { state.exit(); }, mCurrentState);
+    mCurrentState = std::get<T>(mStates);
+    std::visit([](auto& state) { state.entry(); }, mCurrentState);
   }
 
-  template<typename Machine>
-  void handle(Machine& machine, const CloseEvent&) const {
-    std::cout << "Closing the door..." << std::endl;
-    machine.template changeState<ClosedState>();
+  template<typename T>
+  bool is_in_state() const {
+    return std::holds_alternative<T>(mCurrentState);
+  }
+
+  void update() {
+    std::visit([](auto& state) { state.update(); }, mCurrentState);
   }
 };
 
-using Door = StateMachine<ClosedState, OpenState>;
+// Example usage
+class StateA : public State {
+public:
+  void entry() override { std::cout << "Entering State A" << std::endl; }
+  void exit() override { std::cout << "Exiting State A" << std::endl; }
+  void update() override { std::cout << "Updating State A" << std::endl; }
+};
 
-int test() {
-  Door door;
+class StateB : public State {
+public:
+  void entry() override { std::cout << "Entering State B" << std::endl; }
+  void exit() override { std::cout << "Exiting State B" << std::endl; }
+  void update() override { std::cout << "Updating State B" << std::endl; }
+};
 
-  door.handle(OpenEvent{});
-  door.handle(CloseEvent{});
+void test() {
+  StateMachine<StateA, StateB> sm;
 
-  door.handle(CloseEvent{});
-  door.handle(OpenEvent{});
-
-  return 0;
+  sm.update();
+  sm.transition<StateB>();
+  sm.update();
+  sm.transition<StateA>();
 }
 
 }// namespace variadic_simple
-
 #endif//STATE_MACHINES_VARIADIC_SIMPLE_HPP
