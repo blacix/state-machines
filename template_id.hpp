@@ -105,13 +105,13 @@ public:
 };
 
 void test() {
-  StateMachine<TestStateId> gameSM;
+  StateMachine<TestStateId> stateMachine;
 
-  gameSM.addState(std::make_unique<State1>());
-  gameSM.addState(std::make_unique<State2>());
-  gameSM.setInitialState(TestStateId::cState1);
-  gameSM.update();
-  gameSM.update();
+  stateMachine.addState(std::make_unique<State1>());
+  stateMachine.addState(std::make_unique<State2>());
+  stateMachine.setInitialState(TestStateId::cState1);
+  stateMachine.update();
+  stateMachine.update();
 }
 
 }// namespace template_id

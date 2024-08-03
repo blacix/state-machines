@@ -1,10 +1,10 @@
-#ifndef STATE_MACHINES_CLASSIC_HPP
-#define STATE_MACHINES_CLASSIC_HPP
+#ifndef STATE_MACHINES_SIMPLE_HPP
+#define STATE_MACHINES_SIMPLE_HPP
 #include <iostream>
 #include <map>
 #include <memory>
 
-namespace classic {
+namespace simple {
 
 enum class StateId {
   cStateA,
@@ -131,7 +131,7 @@ void test() {
   classicStateMachine.onEventA();
 }
 
-}// namespace classic
+}// namespace simple
 
 
-#endif//STATE_MACHINES_CLASSIC_HPP
+#endif//STATE_MACHINES_SIMPLE_HPP

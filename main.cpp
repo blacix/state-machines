@@ -1,10 +1,10 @@
-#include "classic.hpp"
+#include "simple.hpp"
 #include "template_events.hpp"
 #include "template_id.hpp"
 #include "variadic_flexible.hpp"
 #include "variadic_states.hpp"
 int main() {
-  classic::test();
+  simple::test();
   template_id::test();
   variadic_flexible::test();
   variadic_states::test();
