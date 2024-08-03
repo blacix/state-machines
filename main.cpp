@@ -1,10 +1,8 @@
 #include "classic.hpp"
+#include "template_id.hpp"
 #include <iostream>
 int main() {
-  classic::StateMachine classicStateMachine;
-  classicStateMachine.onEventB();
-  classicStateMachine.onEventB();
-  classicStateMachine.onEventC();
-  classicStateMachine.onEventA();
+  classic::test();
+  template_id::test();
   return 0;
 }

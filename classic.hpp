@@ -123,6 +123,14 @@ void StateMachine::doSomething() {
   std::cout << "something is done" << std::endl;
 }
 
+void test() {
+  classic::StateMachine classicStateMachine;
+  classicStateMachine.onEventB();
+  classicStateMachine.onEventB();
+  classicStateMachine.onEventC();
+  classicStateMachine.onEventA();
+}
+
 }// namespace classic
 
 
