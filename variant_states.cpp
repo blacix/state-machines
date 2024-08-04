@@ -12,30 +12,31 @@ void StateMachine::transition(StateID newState) {
   mCurrentState = &mStates[newState];
 }
 
-void StateMachine::handle() {
-  std::visit([](auto& state_ptr) { state_ptr->handle(); }, *mCurrentState);
-}
 
 State1::State1(StateMachine& machine)
-    : machine(machine) {}
-void State1::handle() {
-  std::cout << "Handling State1" << std::endl;
-  machine.transition(StateID::cState2);
+    : mStateMachine(machine) {}
+
+template<>
+void State1::handle<class TestEvent1>(const TestEvent1& event) {
+  std::cout << "Handling TestEvent1 in State1" << std::endl;
+  mStateMachine.transition(StateID::cState2);
 }
 
 State2::State2(StateMachine& machine)
-    : machine(machine) {}
-void State2::handle() {
-  std::cout << "Handling State2" << std::endl;
-  machine.transition(StateID::cState1);
+    : mStateMachine(machine) {}
+
+template<>
+void State2::handle<class TestEvent2>(const TestEvent2& event) {
+  std::cout << "Handling TestEvent2 in State2" << std::endl;
+  mStateMachine.transition(StateID::cState1);
 }
 
 
 int test() {
   StateMachine sm;
-  sm.handle();
-  sm.handle();
-  sm.handle();
+  sm.handle(TestEvent1());
+  sm.handle(TestEvent2());
+  sm.handle(TestEvent2());
   return 0;
 }
 

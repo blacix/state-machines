@@ -9,6 +9,10 @@
 
 namespace variant_states {
 
+class TestEvent1 {};
+class TestEvent2 {};
+
+
 class StateMachine;// Forward declaration
 
 // Forward declarations of state classes
@@ -19,14 +23,17 @@ class State2;
 enum class StateID { cState1,
                      cState2 };
 
-// State machine class declaration
+// State mStateMachine class declaration
 class StateMachine {
 public:
   using State = std::variant<std::unique_ptr<State1>, std::unique_ptr<State2>>;
 
   StateMachine();
   void transition(StateID newState);
-  void handle();
+  template<typename EventType>
+  void handle(const EventType& event) {
+    std::visit([event](auto& state) { state->handle(event); }, *mCurrentState);
+  }
 
 private:
   std::map<StateID, State> mStates;
@@ -37,19 +44,27 @@ private:
 class State1 {
 public:
   explicit State1(StateMachine& machine);
-  void handle();
+
+  template<typename EventType>
+  void handle(const EventType& event) {
+    std::cout << "Unhandled event in State1" << std::endl;
+  }
 
 private:
-  StateMachine& machine;
+  StateMachine& mStateMachine;
 };
 
 class State2 {
 public:
   explicit State2(StateMachine& machine);
-  void handle();
+
+  template<typename EventType>
+  void handle(const EventType& event) {
+    std::cout << "Unhandled event in State1" << std::endl;
+  }
 
 private:
-  StateMachine& machine;
+  StateMachine& mStateMachine;
 };
 
 // Test function declaration
