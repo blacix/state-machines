@@ -1,5 +1,5 @@
+#include "grtp.hpp"
 #include "simple.hpp"
-#include "template_events.hpp"
 #include "template_id.hpp"
 #include "variadic_enhanced.hpp"
 #include "variadic_flexible.hpp"
@@ -13,6 +13,6 @@ int main() {
   variadic_simple::test();
   variadic_enhanced::test();
   variadic_flexible::test();
-  template_events::test();
+  grtp::test();
   return 0;
 }
