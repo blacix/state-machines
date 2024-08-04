@@ -9,4 +9,6 @@ add_executable(state_machines main.cpp
         variadic_flexible.hpp
         variadic_simple.hpp
         variadic_enhanced.hpp
+        variant_states.hpp
+        variant_states.cpp
 )

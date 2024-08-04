@@ -4,10 +4,12 @@
 #include "variadic_enhanced.hpp"
 #include "variadic_flexible.hpp"
 #include "variadic_simple.hpp"
+#include "variant_states.hpp"
 
 int main() {
   simple::test();
   template_id::test();
+  variant_states::test();
   variadic_simple::test();
   variadic_enhanced::test();
   variadic_flexible::test();
