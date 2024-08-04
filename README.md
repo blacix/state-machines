@@ -1,2 +1,2 @@
 # state-machines
-C++ state machine examples
+Implementations of the OOP State Machine pattern in C++.
