@@ -63,7 +63,7 @@ public:
   // transition with ID
   void transition(StateID newState);
 
-  // transition with template method
+  // alternatively transition with template method
   template<class StateType>
   void transition() {
     mCurrentState = StateType();
@@ -72,11 +72,15 @@ public:
   template<typename EventType>
   void handle(const EventType& event) {
     std::visit([this, event](auto& state) { state.handle(event, *this); }, *mCurrentStatePtr);
+    // or
+    // std::visit([this, event](auto& state) { state.handle(event, *this); }, mCurrentState);
   }
 
 private:
+  // used when transition is called with the StateID
   std::map<StateID, State> mStates;
   State *mCurrentStatePtr;
+  // used when transition is called State template parameter
   State mCurrentState;
 };
 
