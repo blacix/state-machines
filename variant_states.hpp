@@ -15,32 +15,6 @@ class TestEvent2 {};
 
 class StateMachine;// Forward declaration
 
-// Forward declarations of state classes
-class State1;
-class State2;
-
-// Enum to identify mStates
-enum class StateID { cState1,
-                     cState2 };
-
-// State mStateMachine class declaration
-class StateMachine {
-public:
-  using State = std::variant<State1, State2>;
-
-  StateMachine();
-  void transition(StateID newState);
-  template<typename EventType>
-  void handle(const EventType& event) {
-    std::visit([this, event](auto& state) { state.handle(event, *this); }, *mCurrentState);
-  }
-
-private:
-  std::map<StateID, State> mStates;
-  State *mCurrentState;
-};
-
-
 // If stats are not default constructable, cannot be stored in a variant.
 // States could have a reference to the StateMachine initialized in their constructor, but due to the above,
 // the state machine is passed to the handle methods.
@@ -75,6 +49,37 @@ public:
     std::cout << "Unhandled event in State1" << std::endl;
   }
 };
+
+// Enum to identify mStates
+enum class StateID { cState1,
+                     cState2 };
+
+// State mStateMachine class declaration
+class StateMachine {
+public:
+  using State = std::variant<State1, State2>;
+
+  StateMachine();
+  // transition with ID
+  void transition(StateID newState);
+
+  // transition with template method
+  template<class StateType>
+  void transition() {
+    mCurrentState = StateType();
+  }
+
+  template<typename EventType>
+  void handle(const EventType& event) {
+    std::visit([this, event](auto& state) { state.handle(event, *this); }, *mCurrentStatePtr);
+  }
+
+private:
+  std::map<StateID, State> mStates;
+  State *mCurrentStatePtr;
+  State mCurrentState;
+};
+
 
 // Test function declaration
 int test();
