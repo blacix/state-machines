@@ -13,7 +13,7 @@ class StateMachine {
 public:
   template<typename State>
   void changeState() {
-    currentState = &std::get<State>(states);
+    mCurrentState = &std::get<State>(mStates);
   }
 
   template<typename Event>
@@ -21,12 +21,12 @@ public:
     auto passEventToState = [this, &event](auto statePtr) {
       statePtr->handle(*this, event);
     };
-    std::visit(passEventToState, currentState);
+    std::visit(passEventToState, mCurrentState);
   }
 
 private:
-  std::tuple<States...> states;
-  std::variant<States *...> currentState{&std::get<0>(states)};
+  std::tuple<States...> mStates;
+  std::variant<States *...> mCurrentState{&std::get<0>(mStates)};
 };
 
 struct OpenEvent {};
