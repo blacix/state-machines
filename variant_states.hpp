@@ -26,13 +26,13 @@ enum class StateID { cState1,
 // State mStateMachine class declaration
 class StateMachine {
 public:
-  using State = std::variant<std::unique_ptr<State1>, std::unique_ptr<State2>>;
+  using State = std::variant<State1, State2>;
 
   StateMachine();
   void transition(StateID newState);
   template<typename EventType>
   void handle(const EventType& event) {
-    std::visit([event](auto& state) { state->handle(event); }, *mCurrentState);
+    std::visit([this, event](auto& state) { state.handle(event, *this); }, *mCurrentState);
   }
 
 private:
@@ -40,31 +40,40 @@ private:
   State *mCurrentState;
 };
 
+
+// If stats are not default constructable, cannot be stored in a variant.
+// States could have a reference to the StateMachine initialized in their constructor, but due to the above,
+// the state machine is passed to the handle methods.
+// Another solution would be to store the variants in a pointer.
 // State class declarations
 class State1 {
 public:
-  explicit State1(StateMachine& machine);
+  State1() = default;
+  State1(const State1&) = default;
+  State1(State1&&) = default;
+  State1& operator=(const State1&) = default;
+  State1& operator=(State1&&) = default;
+  ~State1() = default;
 
   template<typename EventType>
-  void handle(const EventType& event) {
+  void handle(const EventType& event, StateMachine& machine) {
     std::cout << "Unhandled event in State1" << std::endl;
   }
-
-private:
-  StateMachine& mStateMachine;
 };
 
 class State2 {
 public:
-  explicit State2(StateMachine& machine);
+  State2() = default;
+  State2(const State2&) = default;
+  State2(State2&&) = default;
+  State2& operator=(const State2&) = default;
+  State2& operator=(State2&&) = default;
+  ~State2() = default;
 
   template<typename EventType>
-  void handle(const EventType& event) {
+  void handle(const EventType& event, StateMachine& machine) {
     std::cout << "Unhandled event in State1" << std::endl;
   }
-
-private:
-  StateMachine& mStateMachine;
 };
 
 // Test function declaration

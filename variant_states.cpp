@@ -3,8 +3,8 @@
 namespace variant_states {
 
 StateMachine::StateMachine() {
-  mStates[StateID::cState1] = std::make_unique<State1>(*this);
-  mStates[StateID::cState2] = std::make_unique<State2>(*this);
+  mStates[StateID::cState1] = State1();
+  mStates[StateID::cState2] = State2();
   mCurrentState = &mStates[StateID::cState1];
 }
 
@@ -13,22 +13,16 @@ void StateMachine::transition(StateID newState) {
 }
 
 
-State1::State1(StateMachine& machine)
-    : mStateMachine(machine) {}
-
 template<>
-void State1::handle<class TestEvent1>(const TestEvent1& event) {
+void State1::handle<class TestEvent1>(const TestEvent1& event, StateMachine& machine) {
   std::cout << "Handling TestEvent1 in State1" << std::endl;
-  mStateMachine.transition(StateID::cState2);
+  machine.transition(StateID::cState2);
 }
 
-State2::State2(StateMachine& machine)
-    : mStateMachine(machine) {}
-
 template<>
-void State2::handle<class TestEvent2>(const TestEvent2& event) {
+void State2::handle<class TestEvent2>(const TestEvent2& event, StateMachine& machine) {
   std::cout << "Handling TestEvent2 in State2" << std::endl;
-  mStateMachine.transition(StateID::cState1);
+  machine.transition(StateID::cState1);
 }
 
 
